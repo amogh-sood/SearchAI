@@ -1,0 +1,23 @@
+[project]
+name = "searchai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "duckduckgo-search>=8.1.1",
+    "fastmcp>=2.10.5",
+    "firecrawl>=2.16.0",
+    "langchain>=0.3.26",
+    "langchain-community>=0.3.27",
+    "langchain-pinecone>=0.2.8",
+    "openai>=1.95.1",
+    "pinecone>=7.3.0",
+    "pinecone-text>=0.5.4",
+    "pydantic>=2.11.7",
+    "python-dotenv>=1.1.1",
+    "streamlit>=1.46.1",
+    "supabase>=2.16.0",
+    "typing>=3.10.0.0",
+    "yfinance>=0.2.36",
+]
