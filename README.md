@@ -1,96 +1,104 @@
-SearchAI: Multi-Agent Local Search Platform
+# SearchAI: Multi-Agent Python CLI
 
-Overview
+## Overview
+SearchAI is a multi-agent system for advanced search, retrieval, and reasoning. It uses FastMCP for tool orchestration and LangChain for agentic workflows. The system runs on your machine, but some features require cloud APIs (such as OpenAI, Pinecone, and FireCrawl) for embedding, hybrid search, and web crawling.
 
-SearchAI is a local-first, multi-agent system for advanced search, retrieval, and reasoning. It leverages FastMCP for tool orchestration and LangChain for agentic workflows. The system is designed for privacy, extensibility, and robust local operation—no cloud dependencies required.
+## Features (Current)
+- **FastMCP server** exposing the following tools:
+  - Web search and crawl (DuckDuckGo + FireCrawl, requires FireCrawl API key)
+  - Yahoo Finance price lookup
+  - Text embedding (OpenAI/Pinecone, requires OpenAI and Pinecone API keys)
+  - Hybrid similarity search (semantic + keyword, requires OpenAI and Pinecone API keys)
+  - Hello tool (demo)
+- **LangChain CLI agent** that can:
+  - Use all registered MCP tools
+  - Answer questions and show results in the terminal
+- **HTTP communication** between agent and server
+- **Extensible**: Add new tools as Python functions
 
-Features
-	•	Multi-tool agentic reasoning: Agents can use web search, web crawling, semantic search, embedding, and finance tools.
-	•	Local-first: All components run on your machine. No cloud APIs required (except for optional LLM/embedding providers).
-	•	Extensible: Add new tools as Python functions.
-	•	Modular: Clean separation between agent, server, and tools.
+## File Structure & Purpose
 
-Architecture
+```
+SearchAI/
+├── fastmcp_server/
+│   └── server.py         # FastMCP server and tool definitions
+├── main.py               # CLI agent that interacts with the MCP server
+├── pyproject.toml        # Python dependencies
+├── uv.lock               # Lockfile for uv/pip
+├── README.md             # This file
+```
 
-[User] ⇄ [LangChain Agent] ⇄ [FastMCP Server] ⇄ [Tools]
+### Key Files
+- **fastmcp_server/server.py**: Implements the FastMCP server and all available tools. Tools include web crawling, Yahoo Finance, embedding, similarity search, and a hello tool.
+- **main.py**: CLI chatbot agent. Connects to the MCP server via HTTP, exposes all tools, and allows interactive Q&A in the terminal.
+- **pyproject.toml**: Lists all Python dependencies (FastMCP, LangChain, yfinance, etc).
+- **uv.lock**: Lockfile for reproducible installs.
 
-	•	LangChain Agent: Orchestrates tool use, provides reasoning traces.
-	•	FastMCP Server: Exposes tools (web search, crawl, embedding, finance, etc.) via HTTP.
-	•	Tools: Python functions for search, embedding, finance, etc.
+## Setup Instructions
 
-Setup Instructions
-
-1. Clone the repository
-
+### 1. Clone the repository
+```sh
 git clone <your-repo-url>
 cd SearchAI
+```
 
-2. Install dependencies
-
-We recommend using uv or pip:
-
+### 2. Install dependencies
+We recommend using [uv](https://github.com/astral-sh/uv) or pip:
+```sh
 uv pip install -r requirements.txt
 # or
 pip install -r requirements.txt
-
+```
 Or, if using Poetry:
-
+```sh
 poetry install
+```
 
-3. Set environment variables
-
-Create a .env file in the project root with the following (as needed):
-
+### 3. Set environment variables
+Create a `.env` file in the project root with the following (as needed):
+```
 OPENAI_API_KEY=sk-...
 PINECONE_API_KEY=...
 SUPABASE_URL=...
 SUPABASE_KEY=...
 FIRECRAWL_API_KEY=...
+```
+- Set the keys for the tools you want to use.
+- Embedding and hybrid search require OpenAI and Pinecone API keys.
+- Web crawling requires a FireCrawl API key.
 
-	•	Only set the keys for the tools you want to use.
-	•	For local-only operation, you can skip cloud keys, but some tools (embedding, hybrid search) require them.
+## Usage
 
-4. Install extra system dependencies (if needed)
-	•	uvicorn (for running the server)
-	•	yfinance, pinecone-text, etc. (see pyproject.toml)
-
-Running the System
-
-1. Start the FastMCP Server
-
-uvicorn fastmcp_server.server:mcp.run --reload
-# or, if using the __main__ block:
+### 1. Start the FastMCP Server
+```sh
 python -m fastmcp_server.server
+```
+- This will start the server on `http://localhost:8000/mcp/` by default.
 
-2. Start the Agent (CLI mode)
-
+### 2. Start the CLI Agent
+```sh
 python main.py
+```
+- This launches a CLI chatbot that interacts with the MCP server.
+- Type your questions and see the agent's answers in the terminal.
+- Type `exit` to quit.
 
-	•	This launches a CLI chatbot that interacts with the MCP server.
+## Example Usage
+- "What is TQQQ?"
+- "Get the latest price for AAPL."
+- "Summarize the top web result for 'LangChain'."
+- "Embed this text for search: ..."
 
-Example Usage
-	•	Ask questions like:
-	•	“What is TQQQ?”
-	•	“Get the latest price for AAPL.”
-	•	“Summarize the top web result for ‘LangChain’.”
-	•	“Embed this text for search: …”
-	•	The CLI will show both the agent’s answer and its step-by-step tool usage.
+## Adding New Tools
+- Add new tools as Python functions in `fastmcp_server/server.py` using the `@mcp.tool` decorator.
+- Restart the server to register new tools.
+- Update the agent’s tool list in `main.py` if needed.
 
-Extending Tools
-	•	Add new tools as Python functions in fastmcp_server/server.py using the @mcp.tool decorator.
-	•	Restart the server to register new tools.
-	•	Update the agent’s tool list in main.py if needed.
+## Troubleshooting
+- **Server not responding?** Ensure the MCP server is running and accessible at the URL set in the agent.
+- **Missing dependencies?** Run `pip install -r requirements.txt` or check `pyproject.toml` for extras.
+- **API keys missing?** Set required keys in your `.env` file for the features you want to use.
+- **Tool errors?** Check server logs for stack traces.
 
-Troubleshooting
-	•	Server not responding? Ensure the MCP server is running and accessible.
-	•	Missing dependencies? Run pip install -r requirements.txt or check pyproject.toml for extras.
-	•	API keys missing? Set required keys in your .env file.
-	•	Tool errors? Check server logs for stack traces.
-
-License
-
+## License
 MIT
-
-⸻
-
-For questions or contributions, open an issue or pull request!
