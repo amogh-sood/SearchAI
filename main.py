@@ -9,6 +9,9 @@ from pydantic import SecretStr
 import concurrent.futures
 import yfinance as yf
 
+
+
+
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")

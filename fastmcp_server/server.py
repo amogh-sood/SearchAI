@@ -12,6 +12,9 @@ import openai
 from pinecone_text.sparse import BM25Encoder
 from supabase import Client, create_client
 import yfinance as yf
+import datetime 
+
+
 
 load_dotenv()
 
@@ -72,7 +75,7 @@ def embedder_tool(text: str) -> str:
         bm25_encoder = BM25Encoder().default()
         from pinecone import Pinecone
         pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-        index = pc.Index("searchai")
+        index = pc.Index("searchai2")
         retriever = PineconeHybridSearchRetriever(
             embeddings=embedder,
             sparse_encoder=bm25_encoder,
@@ -94,7 +97,7 @@ def similarity_search_tool(query: str) -> str:
         bm25_encoder = BM25Encoder().default()
         from pinecone import Pinecone
         pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-        index = pc.Index("searchai")
+        index = pc.Index("searchai2")
         retriever = PineconeHybridSearchRetriever(
             embeddings=embedder,
             sparse_encoder=bm25_encoder,
@@ -106,6 +109,7 @@ def similarity_search_tool(query: str) -> str:
         return str("\n\n".join(doc.page_content for doc in docs))
     except Exception as e:
         return str(f"Error in similarity_search_tool: {e}")
+    
     
 @mcp.tool
 def hello_tool(query: str) -> str:
